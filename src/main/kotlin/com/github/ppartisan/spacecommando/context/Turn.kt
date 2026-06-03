@@ -24,7 +24,7 @@ class Turn(board: BoardState) : AppContext(board) {
         Turn(board.copy(alien = board.moveAlien(), commando = board.moveBy(moveBy), turn = board.nextTurn()))
 
     override fun ui(): String = """
-        Your current position is ${board.displayableCommandoPosition()}.
+        Your current position is ${board.commando.printable()}.
         The Alien is ${board.distanceToAlien().printable()} units away from you.
         
         Enter your move:
@@ -43,10 +43,6 @@ class Turn(board: BoardState) : AppContext(board) {
 
         private fun BoardState.isGameOver(): Boolean =
             turn >= 10
-
-        private fun BoardState.displayableCommandoPosition(): String = with(commando) {
-            "(x=$x, y=$y)"
-        }
 
         private fun BoardState.moveBy(moveBy: Point): Point = with(commando) {
             ((x + moveBy.x).coerceIn(0, 19) to (y + moveBy.y).coerceIn(0, 19)).toPoint()

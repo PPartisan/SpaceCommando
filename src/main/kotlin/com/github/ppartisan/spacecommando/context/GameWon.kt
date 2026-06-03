@@ -6,6 +6,6 @@ class GameWon(board: BoardState) : AppContext(board) {
     override fun onProcess(input: String): AppContext  = this
 
     override fun ui(): String =
-        "You Won! The Alien is at '${board.alien}, and the Commando is at '${board.commando}'."
+        "You Won! The Alien is at '${board.alien.printable()}', and the Commando is at '${board.commando.printable()}'."
 
 }

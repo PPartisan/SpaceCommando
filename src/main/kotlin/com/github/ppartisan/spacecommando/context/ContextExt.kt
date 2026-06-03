@@ -13,5 +13,8 @@ fun String?.parseCoordinates(): Point? = runCatching {
         .toPoint()
 }.getOrNull()
 
+fun Point.printable(): String =
+    "(x=$x, y=$y)"
+
 operator fun Point.plus(other: Point) =
     Point(x + other.x, y + other.y)
