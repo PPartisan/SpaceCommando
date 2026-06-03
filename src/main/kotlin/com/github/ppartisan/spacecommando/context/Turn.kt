@@ -32,11 +32,13 @@ class Turn(board: BoardState) : AppContext(board) {
     }
 
     override fun ui(): String = """
-        Your current position is ${board.commando.printable()}.
-        The Alien is ${board.distanceToAlien().printable()} units away from you.
+${board.pingAlien()}
+
+Your current position is ${board.commando.printable()}.
+The Alien is ${board.distanceToAlien().printable()} units away from you.
         
-        Enter your move:
-    """.trimIndent()
+Enter your move:
+""".trimIndent()
 
     companion object {
         private fun BoardState.moveAlien(): Point = with(alien) {
@@ -59,15 +61,38 @@ class Turn(board: BoardState) : AppContext(board) {
             ((x + moveBy.x).coerceIn(0, 19) to (y + moveBy.y).coerceIn(0, 19)).toPoint()
         }
 
-        private fun BoardState.distanceToAlien(): Double =
-            sqrt((commando.x - alien.x).toDouble().pow(2) + (commando.y - alien.y).toDouble().pow(2))
-
         private fun Double.printable(): String = String.format("%.2f", this)
+
+        private fun Point.isValidMove(): Boolean =
+            (abs(x) + abs(y)) <= 2
+
+        private fun BoardState.distanceSqToAlien(): Int =
+            (commando.x - alien.x) * (commando.x - alien.x) +
+                    (commando.y - alien.y) * (commando.y - alien.y)
+
+        private fun BoardState.distanceToAlien(): Double =
+            sqrt(distanceSqToAlien().toDouble())
 
         private fun BoardState.isAlienFound(): Boolean =
             distanceToAlien() < 1.5
 
-        private fun Point.isValidMove(): Boolean =
-            (abs(x) + abs(y)) <= 2
+        private fun BoardState.pingAlien(): String = buildString {
+            val targetDistSq = distanceSqToAlien()
+
+            for (y in 19 downTo 0) {
+                for (x in 0..19) {
+                    val cellDistSq = (x - commando.x) * (x - commando.x) +
+                            (y - commando.y) * (y - commando.y)
+
+                    when {
+                        x == commando.x && y == commando.y -> append("X ")
+                        cellDistSq == targetDistSq -> append("A ")
+                        else -> append(". ")
+                    }
+                }
+                append("\n")
+            }
+            append("\n")
+        }
     }
 }
