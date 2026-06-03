@@ -10,7 +10,7 @@ class Invalid(
 
     override fun ui(): String = """
         Invalid Input:
-            ${originalInput?.ifBlank {"<Missing Input>" } }        
+            ${originalInput.orEmpty().ifBlank {"<Missing Input>" } }        
         Press ENTER to return to the previous option.
     """.trimIndent()
 

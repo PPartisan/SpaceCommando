@@ -18,7 +18,7 @@ class Setup(board: BoardState) : AppContext(board) {
     companion object {
         private fun alienStart() : Point =
             Point((0..7).random(), (0..19).random())
-        fun Point.isValidStart(): Boolean =
+        private fun Point.isValidStart(): Boolean =
             (x in 10..19) && (y in 0..19)
     }
 }
