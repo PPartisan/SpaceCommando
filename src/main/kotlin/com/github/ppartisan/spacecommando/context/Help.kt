@@ -27,7 +27,7 @@ Commando: Starts on the right side of the grid.
 
 For the Commando/Player starting position:
     x >= 10 and x <= 19
-    y >= 0  and y <= 10
+    y >= 0  and y <= 19
 
 MOVEMENT RULES
 Enter your move as relative co-ordinates: (x,y)

@@ -2,7 +2,6 @@ package com.github.ppartisan.spacecommando.context
 
 import com.github.ppartisan.spacecommando.Point
 import com.github.ppartisan.spacecommando.context.Invalid.Companion.invalid
-import com.github.ppartisan.spacecommando.context.printable
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -37,7 +36,10 @@ class Turn(board: BoardState) : AppContext(board) {
 
     companion object {
         private fun BoardState.moveAlien(): Point = with(alien) {
-            Point(x + (-1..1).random(), y + (-1..1).random())
+            Point(
+                (x + (-1..1).random()).coerceIn(0, 19),
+                (y + (-1..1).random()).coerceIn(0, 19)
+            )
         }
 
         private fun Point?.takeIfValidMove() : Point? =
