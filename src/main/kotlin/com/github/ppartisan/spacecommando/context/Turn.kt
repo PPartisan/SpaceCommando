@@ -8,31 +8,35 @@ import kotlin.math.sqrt
 
 class Turn(board: BoardState) : AppContext(board) {
 
-    override fun onProcess(input: String): AppContext = when {
-        board.isGameOver() -> GameLost(board)
-        board.isAlienFound() -> GameWon(board)
-        else -> input.parseCoordinates()
+    override fun onProcess(input: String): AppContext =
+        input.parseCoordinates()
             ?.takeIfValidMove()
             ?.moveCommando()
             ?: invalid(input)
-    }
 
-    private fun Point?.moveCommando() : Turn? =
+    private fun Point?.moveCommando() : AppContext? =
         this?.let { moveCommandoBy(it) }
 
-    private fun moveCommandoBy(moveBy: Point) =
-        Turn(board.copy(alien = board.moveAlien(), commando = board.moveBy(moveBy), turn = board.nextTurn()))
+    private fun moveCommandoBy(moveBy: Point): AppContext {
+        val nextBoard = board.copy(
+            alien = board.moveAlien(),
+            commando = board.moveBy(moveBy),
+            turn = board.nextTurn()
+        )
 
-    override fun ui(): String = (if (board.isAlienFound()) endGame() else enterMove()).trimIndent()
+        return when {
+            nextBoard.isAlienFound() -> GameWon(nextBoard)
+            nextBoard.isGameOver() -> GameLost(nextBoard)
+            else -> Turn(nextBoard)
+        }
+    }
 
-    private fun enterMove() : String = """
+    override fun ui(): String = """
         Your current position is ${board.commando.printable()}.
         The Alien is ${board.distanceToAlien().printable()} units away from you.
         
         Enter your move:
-    """
-
-    private fun endGame() : String = "You have found the Alien! Press ENTER to end the game."
+    """.trimIndent()
 
     companion object {
         private fun BoardState.moveAlien(): Point = with(alien) {
@@ -65,7 +69,5 @@ class Turn(board: BoardState) : AppContext(board) {
 
         private fun Point.isValidMove(): Boolean =
             (abs(x) + abs(y)) <= 2
-
     }
 }
-
