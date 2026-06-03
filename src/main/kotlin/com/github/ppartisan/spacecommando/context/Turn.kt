@@ -32,7 +32,9 @@ class Turn(board: BoardState) : AppContext(board) {
     }
 
     override fun ui(): String = """
+|===============SCANNER===============|        
 ${board.pingAlien()}
+=======================================        
 
 Your current position is ${board.commando.printable()}.
 The Alien is ${board.distanceToAlien().printable()} units away from you.
@@ -92,7 +94,6 @@ Enter your move:
                 }
                 append("\n")
             }
-            append("\n")
-        }
+        }.trim()
     }
 }
