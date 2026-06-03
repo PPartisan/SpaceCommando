@@ -2,6 +2,7 @@ package com.github.ppartisan.spacecommando.context
 
 import com.github.ppartisan.spacecommando.Point
 import com.github.ppartisan.spacecommando.context.Invalid.Companion.invalid
+import com.github.ppartisan.spacecommando.context.printable
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -23,12 +24,16 @@ class Turn(board: BoardState) : AppContext(board) {
     private fun moveCommandoBy(moveBy: Point) =
         Turn(board.copy(alien = board.moveAlien(), commando = board.moveBy(moveBy), turn = board.nextTurn()))
 
-    override fun ui(): String = """
+    override fun ui(): String = (if (board.isAlienFound()) endGame() else enterMove()).trimIndent()
+
+    private fun enterMove() : String = """
         Your current position is ${board.commando.printable()}.
         The Alien is ${board.distanceToAlien().printable()} units away from you.
         
         Enter your move:
-    """.trimIndent()
+    """
+
+    private fun endGame() : String = "You have found the Alien! Press ENTER to end the game."
 
     companion object {
         private fun BoardState.moveAlien(): Point = with(alien) {

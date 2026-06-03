@@ -11,7 +11,7 @@ class Invalid(
     override fun ui(): String = """
         Invalid Input:
             ${originalInput?.ifBlank {"<Missing Input>" } }        
-        Press any key to return to the previous option.
+        Press ENTER to return to the previous option.
     """.trimIndent()
 
     companion object {

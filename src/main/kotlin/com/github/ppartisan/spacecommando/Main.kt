@@ -12,9 +12,10 @@ fun main() {
             it.process(readlnOrNull())
         }
         clearScreen()
-        if (next.isTerminal)
+        val isGameOver = next.isTerminal
+        if (isGameOver)
             println(next.ui())
-    } while (!next.isTerminal)
+    } while (!isGameOver)
 }
 
 private fun clearScreen() =

@@ -46,6 +46,6 @@ between players after each round. If the distance
 is less than 1.5 units, the Commando wins!
 ==================================================
 
-Press any key to return to the previous option.
+Press ENTER to return to the previous option.
     """.trimIndent()
 }
