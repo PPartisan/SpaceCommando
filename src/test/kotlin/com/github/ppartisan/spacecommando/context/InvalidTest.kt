@@ -3,9 +3,6 @@ package com.github.ppartisan.spacecommando.context
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.equals.shouldEqual
 import io.kotest.matchers.string.shouldContain
-import io.kotest.matchers.types.shouldBeInstanceOf
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -17,7 +14,7 @@ class InvalidTest {
     fun `when processing any input, then resume original context`(input: String) {
         val wrapped = Init()
         val invalid = Invalid(null, wrapped, wrapped.board)
-        invalid.onProcess(input) shouldBeEqual wrapped
+        invalid.process(input) shouldBeEqual wrapped
     }
 
     @ParameterizedTest
@@ -42,4 +39,5 @@ class InvalidTest {
         Press ENTER to return to the previous option.
         """.trimIndent()
     }
+
 }

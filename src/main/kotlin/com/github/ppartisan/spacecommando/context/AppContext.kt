@@ -8,7 +8,7 @@ sealed class AppContext(
 
     fun process(input: String?) : AppContext =
         when(input.lowercaseOrEmpty()) {
-            "help", "?" -> this as? Help ?: Help(this, board)
+            "help", "h", "?" -> this as? Help ?: Help(this, board)
             "quit", "q" -> Quit
             else -> onProcess(input.lowercaseOrEmpty())
         }

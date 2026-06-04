@@ -3,10 +3,12 @@ package com.github.ppartisan.spacecommando.context
 import com.github.ppartisan.spacecommando.Point
 import com.github.ppartisan.spacecommando.context.Invalid.Companion.invalid
 import kotlin.math.abs
-import kotlin.math.pow
 import kotlin.math.sqrt
 
-class Turn(board: BoardState) : AppContext(board) {
+class Turn(
+    board: BoardState,
+    private val moveAlien: MoveAlien = MoveAlien(),
+) : AppContext(board) {
 
     override fun onProcess(input: String): AppContext =
         input.parseCoordinates()
@@ -14,12 +16,12 @@ class Turn(board: BoardState) : AppContext(board) {
             ?.moveCommando()
             ?: invalid(input)
 
-    private fun Point?.moveCommando() : AppContext? =
+    private fun Point?.moveCommando(): AppContext? =
         this?.let { moveCommandoBy(it) }
 
     private fun moveCommandoBy(moveBy: Point): AppContext {
         val nextBoard = board.copy(
-            alien = board.moveAlien(),
+            alien = moveAlien(board),
             commando = board.moveBy(moveBy),
             turn = board.nextTurn()
         )
@@ -42,15 +44,10 @@ The Alien is ${board.distanceToAlien().printable()} units away from you.
 Enter your move:
 """.trimIndent()
 
-    companion object {
-        private fun BoardState.moveAlien(): Point = with(alien) {
-            Point(
-                (x + (-1..1).random()).coerceIn(0, 19),
-                (y + (-1..1).random()).coerceIn(0, 19)
-            )
-        }
 
-        private fun Point?.takeIfValidMove() : Point? =
+    companion object {
+
+        private fun Point?.takeIfValidMove(): Point? =
             this?.takeIf { it.isValidMove() }
 
         private fun BoardState.nextTurn(): Int =
@@ -81,7 +78,7 @@ Enter your move:
         private fun BoardState.pingAlien(): String = buildString {
             val targetDistSq = distanceSqToAlien()
 
-            for (y in 19 downTo 0) {
+            for (y in 0..19) {
                 for (x in 0..19) {
                     val cellDistSq = (x - commando.x) * (x - commando.x) +
                             (y - commando.y) * (y - commando.y)
@@ -95,5 +92,38 @@ Enter your move:
                 append("\n")
             }
         }.trim()
+    }
+
+
+    class MoveAlien(
+        val allowedMoves: List<Point> = ALIEN_MOVES
+    ) {
+        constructor(allowedMove: Point) : this(listOf(allowedMove))
+
+        operator fun invoke(board: BoardState): Point {
+            val nextPos = board.alien + allowedMoves.random()
+            return Point(
+                nextPos.x.coerceIn(0, 19),
+                nextPos.y.coerceIn(0, 19)
+            )
+        }
+
+        companion object {
+            private val ALIEN_MOVES = listOf(
+                Point(0, 0),
+                Point(1, 0),
+                Point(-1, 0),
+                Point(0, 1),
+                Point(0, -1),
+                Point(1, 1),
+                Point(1, -1),
+                Point(-1, 1),
+                Point(-1, -1),
+                Point(2, 0),
+                Point(-2, 0),
+                Point(0, 2),
+                Point(0, -2)
+            )
+        }
     }
 }

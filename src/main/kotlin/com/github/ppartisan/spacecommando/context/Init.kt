@@ -11,8 +11,8 @@ class Init : AppContext(BoardState.initial) {
 
     override fun ui(): String = """
         Welcome to Alien vs. Commando! Here are your available commands:
-            "start", "s"    -> Start a new game
-            "help", "?"     -> Show the help text
-            "quit", "q"     -> Quit the game
+            "start", "s"            -> Start a new game
+            "help", "h", "?"        -> Show the help text
+            "quit", "q"             -> Quit the game
     """.trimIndent()
 }
