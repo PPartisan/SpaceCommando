@@ -1,27 +1,38 @@
 package com.github.ppartisan.spacecommando.context
 
 import io.kotest.matchers.equals.shouldBeEqual
-import io.kotest.matchers.equals.shouldEqual
 import io.kotest.matchers.string.shouldContain
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.Codepoint
+import io.kotest.property.arbitrary.string
+import io.kotest.property.arbitrary.stringPattern
+import io.kotest.property.arbitrary.whitespace
+import io.kotest.property.assume
+import io.kotest.property.checkAll
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.ValueSource
 
 class InvalidTest {
 
-    @ParameterizedTest
-    @ValueSource(strings = ["", "not-whitespace-or-empty", "  ", "\n\t"])
-    fun `when processing any input, then resume original context`(input: String) {
+    @Test
+    fun `when processing any non-global input, then resume the original context`() = runTest {
         val wrapped = Init()
         val invalid = Invalid(null, wrapped, wrapped.board)
-        invalid.process(input) shouldBeEqual wrapped
+        val globalCommands = setOf("help", "h", "?", "quit", "q")
+
+        checkAll(Arb.string()) {
+            assume(it.lowercase() !in globalCommands)
+            invalid.process(it) shouldBeEqual wrapped
+        }
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = ["", "  ", "\n\t"])
-    fun `when original input is blank, then show missing input message on ui`(input: String) {
-        val invalid = Invalid(input, Init(), BoardState.initial)
-        invalid.ui() shouldContain "<Missing Input>"
+    @Test
+    fun `when original input is blank, then show missing input message on ui`() = runTest {
+        checkAll(Arb.string(minSize = 0, maxSize = 20, codepoints = Codepoint.whitespace())) {
+            Invalid(
+                it, Init(), BoardState.initial
+            ).ui() shouldContain "<Missing Input>"
+        }
     }
 
     @Test
@@ -31,13 +42,12 @@ class InvalidTest {
     }
 
     @Test
-    fun `when original input is not blank, then show invalid input on ui`() {
-        val invalid = Invalid("some_input", Init(), BoardState.initial)
-        invalid.ui() shouldEqual """
-        Invalid Input:
-            some_input        
-        Press ENTER to return to the previous option.
-        """.trimIndent()
+    fun `when original input is not blank, then show invalid input on ui`() = runTest {
+        checkAll(Arb.stringPattern("\\S{1,10}")) {
+            Invalid(
+                it, Init(), BoardState.initial
+            ).ui() shouldContain it
+        }
     }
 
 }

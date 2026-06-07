@@ -1,7 +1,9 @@
 package com.github.ppartisan.spacecommando.context
 
 import com.github.ppartisan.spacecommando.Point
+import com.github.ppartisan.spacecommando.Point.Companion.VALID_MOVES
 import com.github.ppartisan.spacecommando.context.Invalid.Companion.invalid
+import org.jetbrains.annotations.TestOnly
 import kotlin.math.abs
 import kotlin.math.sqrt
 
@@ -63,7 +65,7 @@ Enter your move:
         private fun Double.printable(): String = String.format("%.2f", this)
 
         private fun Point.isValidMove(): Boolean =
-            (abs(x) + abs(y)) <= 2
+            this in VALID_MOVES
 
         private fun BoardState.distanceSqToAlien(): Int =
             (commando.x - alien.x) * (commando.x - alien.x) +
@@ -96,7 +98,7 @@ Enter your move:
 
 
     class MoveAlien(
-        val allowedMoves: List<Point> = ALIEN_MOVES
+        val allowedMoves: List<Point> = VALID_MOVES
     ) {
         constructor(allowedMove: Point) : this(listOf(allowedMove))
 
@@ -108,22 +110,5 @@ Enter your move:
             )
         }
 
-        companion object {
-            private val ALIEN_MOVES = listOf(
-                Point(0, 0),
-                Point(1, 0),
-                Point(-1, 0),
-                Point(0, 1),
-                Point(0, -1),
-                Point(1, 1),
-                Point(1, -1),
-                Point(-1, 1),
-                Point(-1, -1),
-                Point(2, 0),
-                Point(-2, 0),
-                Point(0, 2),
-                Point(0, -2)
-            )
-        }
     }
 }

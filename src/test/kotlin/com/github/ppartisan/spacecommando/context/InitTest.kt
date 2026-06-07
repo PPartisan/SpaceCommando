@@ -2,6 +2,11 @@ package com.github.ppartisan.spacecommando.context
 
 import io.kotest.matchers.equals.shouldEqual
 import io.kotest.matchers.types.shouldBeInstanceOf
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.string
+import io.kotest.property.assume
+import io.kotest.property.checkAll
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -27,8 +32,13 @@ class InitTest {
     }
 
     @Test
-    fun `when unrecognised input, then prompt invalid input`() {
-        Init().process("nonsense").shouldBeInstanceOf<Invalid>()
+    fun `when input is unrecognised, then transition to Invalid state`() = runTest {
+        val commands = setOf("start", "s", "help", "h", "?", "quit", "q")
+        val init = Init()
+        checkAll(Arb.string()) {
+            assume(it.lowercase() !in commands)
+            init.process(it).shouldBeInstanceOf<Invalid>()
+        }
     }
 
     @Test

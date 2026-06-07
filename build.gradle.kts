@@ -18,10 +18,14 @@ repositories {
     mavenCentral()
 }
 
+val koTest = "6.1.11"
+
 dependencies {
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter-params:6.0.3")
-    testImplementation("io.kotest:kotest-assertions-core:6.1.11")
+    testImplementation("io.kotest:kotest-assertions-core:${koTest}")
+    testImplementation("io.kotest:kotest-property:${koTest}")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
 }
 
 kotlin {
